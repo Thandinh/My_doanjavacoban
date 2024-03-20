@@ -1,0 +1,10 @@
+package doanjavacoban;
+
+public class Hangsanxuat {
+	public String hangSanXuat, quocGia;
+
+	public Hangsanxuat(String hangSanXuat, String quocGia) {
+		this.hangSanXuat = hangSanXuat;
+		this.quocGia = quocGia;
+	}
+}

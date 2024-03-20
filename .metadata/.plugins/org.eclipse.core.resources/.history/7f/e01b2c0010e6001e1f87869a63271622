@@ -1,0 +1,23 @@
+package testdoan;
+
+public class Phim {
+	public String tenPhim;
+	public String daoDien;
+	public String theLoai;
+	public int namSanXuat;
+	public Hangsanxuat hangSanXuat;
+	public Ngay ngayChieu;
+	public int giaVeVND;
+	public Phim(String tenPhim, String daoDien, String theLoai, int namSanXuat, Hangsanxuat hangSanXuat,
+			Ngay ngayChieu, int giaVeVND) {
+		this.tenPhim = tenPhim;
+		this.daoDien = daoDien;
+		this.theLoai = theLoai;
+		this.namSanXuat = namSanXuat;
+		this.hangSanXuat = hangSanXuat;
+		this.ngayChieu = ngayChieu;
+		this.giaVeVND = giaVeVND;
+	}
+	
+	
+}
