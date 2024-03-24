@@ -1,5 +1,9 @@
 package doanjavacoban;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Scanner;
 
 public class Main {
@@ -13,7 +17,7 @@ public class Main {
 		while(true) {
 			int chon = menu();
 			if(chon == 0) {
-				System.out.println("Chương trình đã dừng !");
+				System.out.println("Chương trình đã dừng!");
 				break;
 			}
 			switch(chon) {
@@ -32,11 +36,17 @@ public class Main {
 				timKiemPhim(phim);
 				break;
 			case 5:
+				chinhSuaPhim(phim);
+				break;
+			case 6:
 				System.out.println("Bạn đã chọn chức năng xóa phim ");
 				phim = xoaPhim(phim);
 				break;
-			case 6:
+			case 7:
 				sapXep(phim);
+				break;
+			case 8:
+				file(phim);
 				break;
 			default:
 				System.out.println("Vui lòng chọn từ 0 - 9");
@@ -49,43 +59,65 @@ public class Main {
 	public static int menu() {
 		System.out.println(" ____________________________________________________________");
 		System.out.println("║                                                            ║");
-		System.out.println("║____________ CHƯƠNG TRÌNH QUẢN LÝ CÁC BỘ PHIM ______________║");
+		System.out.println("║_________________ CHƯƠNG TRÌNH QUẢN LÝ PHIM ________________║");
 		System.out.println("║                                                            ║");
 		System.out.println("║   | 1 |  Nhập thông tin phim                               ║");
 		System.out.println("║   | 2 |  Hiển thị thông tin các bộ phim có trong danh sách ║");
 		System.out.println("║   | 3 |  Thêm 1 bộ phim vào danh sách                      ║");
 		System.out.println("║   | 4 |  Tìm kiếm phim theo tên                            ║");
-		System.out.println("║   | 5 |  Xóa 1 bộ phim theo tên                            ║");
-		System.out.println("║   | 6 |  Sắp xếp theo giá                                  ║");
+		System.out.println("║   | 5 |  chỉnh sửa thông tin bộ phim                       ║");
+		System.out.println("║   | 6 |  Xóa 1 bộ phim                                     ║");
+		System.out.println("║   | 7 |  Sắp xếp theo giá                                  ║");
+		System.out.println("║   | 8 |  File                                              ║");
 		System.out.println("║   | 0 |  Dừng chương trình                                 ║");
 		System.out.println("║____________________________________________________________║");
 		System.out.println();
 		System.out.print(" >>>>> Chọn chức năng: ");
 		Scanner sc = new Scanner(System.in);
-		int chon = sc.nextInt();
+		int chon = kiemTraDauVao(0, 10);
 		System.out.println();
 		return chon;
+	}
+	
+	
+	
+//	Hàm kiểm tra dữ liệu đầu vào
+	public static int kiemTraDauVao(int a, int b) {
+		Scanner sc = new Scanner(System.in);
+		while(true) {
+			try {
+				int chon = Integer.parseInt(sc.next());
+				if(chon >= a && chon <= b) {
+					return chon;
+				} else {
+					System.out.print("Nhập sai vui lòng nhập lại: ");
+				}
+			}catch(NumberFormatException e){
+				System.out.print("Nhập không hợp lệ vui lòng nhập lại: ");
+			}
+		}
 	}
 	
 //	Hàm nhập thông tin
 	public static void nhapThongTin(Phim[] phim) {
 		Scanner sc = new Scanner(System.in);
 		System.out.print("Nhập số lượng bộ phim: ");
-		int soLuong = Integer.parseInt(sc.nextLine());
+		int soLuong = kiemTraDauVao(1, 100);
 		Ngay[] ngay = new Ngay[soLuong];
 		for(int i = 0; i < soLuong; i++) {
 			System.out.println("Nhập thông tin cho Phim thứ " + (i + 1));
 			System.out.print("Tên phim: "); String tenPhim = sc.nextLine();
+			System.out.print("Nhập năm sản xuất: "); int namSX = kiemTraDauVao(1000, 2999);
 			System.out.print("Đạo diễn: "); String tenDaoDien = sc.nextLine();
 			System.out.print("Thể loại: "); String theLoai = sc.nextLine();
 			System.out.print("Nhập hãng sản xuất: "); String hangSX = sc.nextLine();
 			System.out.print("Nhập quốc gia: "); String quocGia = sc.nextLine();
-			System.out.print("Nhập ngày chiếu: "); int ngayChieu = Integer.parseInt(sc.nextLine());
-			System.out.print("Nhập tháng chiếu: "); int thangChieu = Integer.parseInt(sc.nextLine());
-			System.out.print("Nhập năm chiếu: "); int namChieu = Integer.parseInt(sc.nextLine());
-			System.out.print("Nhập giá vé(VND): "); int giaVe = Integer.parseInt(sc.nextLine());
+			System.out.print("Nhập ngày chiếu: "); int ngayChieu = kiemTraDauVao(1, 31);
+			System.out.print("Nhập tháng chiếu: "); int thangChieu = kiemTraDauVao(1, 12);
+			System.out.print("Nhập năm chiếu: "); int namChieu = kiemTraDauVao(100, 3000);
+			System.out.print("Nhập giá vé(VND): "); int giaVe = kiemTraDauVao(1000, 999999999);
 			Ngay n = new Ngay(ngayChieu, thangChieu, namChieu);
-			phim[i]  = new Phim(tenPhim, tenDaoDien, theLoai, hangSX, quocGia, n, giaVe);
+			phim[i]  = new Phim(tenPhim, namSX, tenDaoDien, theLoai, hangSX, quocGia, n, giaVe);
 		}
 		soBoPhim = soLuong;
 		System.out.println("Đã nhập thông tin thành công");
@@ -96,6 +128,7 @@ public class Main {
 		if(soBoPhim < SOLUONGMAX) {
 			Scanner sc = new Scanner(System.in);
 			System.out.print("Tên phim: "); String tenPhim = sc.nextLine();
+			System.out.print("Nhập năm sản xuất: "); int namSX = kiemTraDauVao(1000, 2999);
 			System.out.print("Đạo diễn: "); String tenDaoDien = sc.nextLine();
 			System.out.print("Thể loại: "); String theLoai = sc.nextLine();
 			System.out.print("Nhập hãng sản xuất: "); String hangSX = sc.nextLine();
@@ -105,7 +138,7 @@ public class Main {
 			System.out.print("Nhập năm chiếu: "); int namChieu = Integer.parseInt(sc.nextLine());
 			System.out.print("Nhập giá vé(VND): "); int giaVe = Integer.parseInt(sc.nextLine());
 			Ngay n = new Ngay(ngayChieu, thangChieu, namChieu);
-			Phim p = new Phim(tenPhim, tenDaoDien, theLoai, hangSX, quocGia, n, giaVe);
+			Phim p = new Phim(tenPhim, namSX, tenDaoDien, theLoai, hangSX, quocGia, n, giaVe);
 			soBoPhim++;
 			System.out.println("Đã thêm phim!");
 			System.out.println("");
@@ -123,20 +156,18 @@ public class Main {
 	        System.out.println("Danh sách phim đang rỗng");
 	        return;
 	    }
-	    System.out.println("DANH SÁCH PHIM");
-	    System.out.println("------------------------------------------------------------------------------------------------------------------------------------");
-	    System.out.printf("| %-20s | %-18s | %-15s | %-15s | %-12s | %-13s | %-10s |\n", 
-	                       "Tên phim", "Đạo diễn", "Thể loại", "Hãng sản xuất", "Quốc gia", "Ngày chiếu", "Giá vé");
-	    System.out.println("-----------------------------------------------------------------------------------------------------------------------------------");
-
+	    System.out.println("");
+	    System.out.println("╔═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
+	    System.out.printf("║ %-24s ║ %-7s ║ %-20s ║ %-14s ║ %-20s ║ %-12s ║ %-16s ║ %11s ║\n", 
+	                       "TÊN PHIM", "NĂM SX", "ĐẠO DIỄN", "THỂ LOẠI", "HÃNG SẢN XUẤT", "QUỐC GIA", "NGÀY CHIẾU", "GIÁ VÉ");
+	    System.out.println("╠═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╣");
 	    for (int i = 0; i < soBoPhim; i++) {
-	        System.out.printf("| %-20s | %-18s | %-15s | %-15s | %-12s | %-3d/%-3d/%-7d | %-10d |\n", 
-	                          p[i].tenPhim , p[i].daoDien, p[i].theLoai, 
+	        System.out.printf("║ %-24s ║ %-7d ║ %-20s ║ %-14s ║ %-20s ║ %-12s ║ %-4d/%-4d/%-6d ║ %7d VND ║\n", 
+	                          p[i].tenPhim , p[i].namSX, p[i].daoDien, p[i].theLoai, 
 	                          p[i].hangSanXuat, p[i].quocGia, p[i].ngayChieu.ngay, p[i].ngayChieu.thang, 
 	                          p[i].ngayChieu.nam, p[i].giaVeVND);
 	    }
-
-	    System.out.println("------------------------------------------------------------------------------------------------------------------------------------");
+	    System.out.println("╚═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
 	   
 	}
 	
@@ -177,18 +208,89 @@ public class Main {
 		System.out.println("Nhập tên của phim cần tìm kiếm: "); String tenPhim = sc.nextLine();
 		boolean timThay = false;
 		System.out.println("PHIM BẠN CẦN TÌM KIẾM");
-	    System.out.println("-----------------------------------------------------------------------------------------------------------------------------------------");
-	    System.out.printf("| %-20s | %-18s | %-15s | %-15s | %-12s | %-13s | %-10s |\n", 
-	                       "Tên phim", "Đạo diễn", "Thể loại", "Hãng sản xuất", "Quốc gia", "Ngày chiếu", "Giá vé");
-	    System.out.println("-----------------------------------------------------------------------------------------------------------------------------------------");
+		System.out.println("╔═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
+	    System.out.printf("║ %-24s ║ %-7s ║ %-20s ║ %-14s ║ %-20s ║ %-12s ║ %-16s ║ %11s ║\n", 
+	                       "TÊN PHIM", "NĂM SX", "ĐẠO DIỄN", "THỂ LOẠI", "HÃNG SẢN XUẤT", "QUỐC GIA", "NGÀY CHIẾU", "GIÁ VÉ");
+	    System.out.println("╠═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╣");
 		for(int i = 0; i < soBoPhim; i++) {
 			if(p[i].tenPhim.equalsIgnoreCase(tenPhim)) {
-				 System.out.printf("| %-20s | %-18s | %-15s | %-15s | %-12s | %-3d/%-3d/%-7d | %-10d |\n", 
-                         p[i].tenPhim , p[i].daoDien, p[i].theLoai, 
-                         p[i].hangSanXuat, p[i].quocGia, p[i].ngayChieu.ngay, p[i].ngayChieu.thang, 
-                         p[i].ngayChieu.nam, p[i].giaVeVND);
+				System.out.printf("║ %-24s ║ %-7d ║ %-20s ║ %-14s ║ %-20s ║ %-12s ║ %-4d/%-4d/%-6d ║ %7d VND ║\n", 
+                        p[i].tenPhim , p[i].namSX, p[i].daoDien, p[i].theLoai, 
+                        p[i].hangSanXuat, p[i].quocGia, p[i].ngayChieu.ngay, p[i].ngayChieu.thang, 
+                        p[i].ngayChieu.nam, p[i].giaVeVND);
 			}
 		}
+		System.out.println("╚═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
+	}
+	
+	public static void chinhSuaPhim(Phim[] p) {
+		if(soBoPhim == 0) {
+			System.out.println("Danh sách phim đang rỗng");
+			return;
+		}
+		Scanner sc = new Scanner(System.in);
+		System.out.print("Nhập tên phim mà bạn cần chỉnh sửa thông tin: ");
+		String tenPhim = sc.nextLine();
+		boolean timThay = false;
+		for(int i = 0; i < soBoPhim; i++) {
+			if(p[i].tenPhim.equalsIgnoreCase(tenPhim) || p[i].tenPhim.startsWith(tenPhim)) {
+				System.out.println("  Thông tin phim cần chỉnh sửa");
+				System.out.println("  1. Tên phim: " + p[i].tenPhim);
+				System.out.println("  2. Năm sản xuất: " + p[i].namSX);
+				System.out.println("  3. Đạo diễn: " + p[i].daoDien);
+				System.out.println("  4. Thể loại: " + p[i].theLoai);
+				System.out.println("  5. Hãng sản xuất: " + p[i].hangSanXuat);
+				System.out.println("  6. Quốc gia: " + p[i].quocGia);
+				System.out.println("  7. Ngày chiếu: " + p[i].ngayChieu.ngay + "/" + p[i].ngayChieu.thang + "/" + p[i].ngayChieu.nam);
+				System.out.println("  8. Giá vé: " + p[i].giaVeVND);
+				System.out.print(">> Nhập số thứ tự tương ứng với thông tin cần chỉnh sửa: ");
+				int c = kiemTraDauVao(1, 8);
+				switch(c) {
+				case 1:
+					System.out.print("Nhập tên mới của phim: ");
+					p[i].tenPhim = sc.nextLine();
+					break;
+				case 2:
+					System.out.print("Nhập năm sản xuất mới: ");
+					p[i].namSX = kiemTraDauVao(1000, 2999);
+					break;
+				case 3:
+					System.out.print("Nhập tên đạo diễn mới: ");
+					p[i].daoDien = sc.nextLine();
+					break;
+				case 4:
+					System.out.print("Nhập thể loại mới: ");
+					p[i].theLoai = sc.nextLine();
+					break;
+				case 5:
+					System.out.print("Nhập hãng sản xuất mới: ");
+					p[i].hangSanXuat = sc.nextLine();
+					break;
+				case 6:
+					System.out.print("Nhập quốc gia mới: ");
+					p[i].quocGia = sc.nextLine();
+					break;
+				case 7:
+					System.out.println("Nhập ngày chiếu mới");
+					System.out.print("Ngày: "); int ngay = kiemTraDauVao(1, 31);
+					System.out.print("Tháng: "); int thang = kiemTraDauVao(1, 12);
+					System.out.print("Năm: "); int nam = kiemTraDauVao(1000, 2999);
+					p[i].ngayChieu = new Ngay(ngay, thang, nam);
+					break;
+				case 8:
+					System.out.print("Nhập giá mới: ");
+					p[i].giaVeVND = kiemTraDauVao(1000, 99999999);
+					break;
+				}
+				System.out.println("Thông tin đã được cập nhật");
+				timThay = true;
+				break;
+			}
+		}
+		if(!timThay) {
+			System.out.println("Không tìm thấy bộ phim cần chỉnh sửa thông tin");
+		}
+		System.out.println("");
 	}
 	
 	
@@ -196,13 +298,13 @@ public class Main {
 	public static void sapXep(Phim[] p) {
 		System.out.println(" ______ Các chức năng sắp xếp ________");
 		System.out.println("║                                     ║");
-        System.out.println("║  1. Sắp xếp giảm dần theo giá       ║");
-        System.out.println("║  2. Thêm xếp tăng dần theo giá      ║");
+        System.out.println("║  1. Sắp xếp tăng dần theo giá       ║");
+        System.out.println("║  2. Thêm xếp giảm dần theo giá      ║");
         System.out.println("║_____________________________________║");
         System.out.println("");
 		System.out.print(">> Nhập lựa chọn(1-2): ");
 		Scanner sc = new Scanner(System.in);
-		int c = Integer.parseInt(sc.nextLine());
+		int c = kiemTraDauVao(1, 2);
 		switch(c) {
 		case 1:
 			System.out.println("Chức năng sắp xếp tăng dần");
@@ -220,6 +322,10 @@ public class Main {
 	}
 
 	public static void sapXepGiamDanTheoGia(Phim[] p) {
+		if (soBoPhim == 0) {
+			System.out.println("Danh sách phim đang rỗng");
+		    return;
+		}
 		for(int i = 0; i < soBoPhim - 1; i++) {
 			for(int j = i + 1; j < soBoPhim; j++) {
 				if(p[i].giaVeVND < p[j].giaVeVND) {
@@ -234,6 +340,10 @@ public class Main {
 	
 	
 	public static void sapXepTangDanTheoGia(Phim[] p) {
+		if (soBoPhim == 0) {
+			System.out.println("Danh sách phim đang rỗng");
+		    return;
+		}
 		for(int i = 0; i < soBoPhim - 1; i++) {
 			for(int j = i + 1; j < soBoPhim; j++) {
 				if(p[i].giaVeVND > p[j].giaVeVND) {
@@ -246,9 +356,80 @@ public class Main {
 		xuatThongTin(p);
 	}
 	
-	public static void thongKeTheoGia(Phim p) {
+	public static void file(Phim[] p) {
+		System.out.println(" _______________ File ________________");
+		System.out.println("║                                     ║");
+        System.out.println("║  1. Đọc từ file                     ║");
+        System.out.println("║  2. Xuất file                       ║");
+        System.out.println("║_____________________________________║");
+        System.out.println("");
+		System.out.print(">> Nhập lựa chọn(1-2): ");
+		int c = kiemTraDauVao(1, 2);
+		switch(c) {
+		case 1:
+			System.out.println("Đã chọn chức năng đọc file");
+			System.out.println("");
+			nhapTuFile(p);
+			break;
+		case 2:
+			System.out.println("Đã chọn chức năng xuất ra file");
+			System.out.println("");
+			xuatRaFile(p);
+			break;
+		}
 		
 	}
+	
+	
+	public static void nhapTuFile(Phim[] p) {
+		Scanner sc = new Scanner(System.in);
+		System.out.print("Nhập tên file: ");
+		String tenFile = sc.nextLine();
+		try {
+			File file = new File(tenFile);
+			Scanner scanner = new Scanner(file);
+			int index = 0;
+			while(scanner.hasNextLine()) {
+				String line = scanner.nextLine();
+				String[] parts = line.split(",");
+				String tenPhim = parts[0].trim();
+				int namSX = Integer.parseInt(parts[1].trim());
+				String daoDien = parts[2].trim();
+				String theLoai = parts[3].trim();
+				String hangSX = parts[4].trim();
+				String quocGia = parts[5].trim();
+				int ngayChieu = Integer.parseInt(parts[6].trim());
+				int thangChieu = Integer.parseInt(parts[7].trim());
+				int namChieu = Integer.parseInt(parts[8].trim());
+				int giaVe = Integer.parseInt(parts[9].trim());
+				Ngay ngay = new Ngay(ngayChieu, thangChieu, namChieu);
+				p[index++] = new Phim(tenPhim, namSX, daoDien, theLoai, hangSX, quocGia, ngay, giaVe);
+			}
+			soBoPhim = index;
+		} catch (FileNotFoundException e) {
+			System.out.println("Không tìm thấy File " + tenFile);
+			e.printStackTrace();
+		}		
+	}
+	
+	public static void xuatRaFile(Phim[] p) {
+		Scanner sc = new Scanner(System.in);
+		System.out.print("Hãy nhập tên File: ");
+		String tenFile = sc.nextLine();
+		try {
+			FileWriter writer = new FileWriter(tenFile);
+			for(int i = 0; i < Main.soBoPhim; i++) {
+				writer.write(p[i].tenPhim + "," + p[i].namSX + "," + p[i].daoDien + "," + p[i].theLoai + "," + p[i].hangSanXuat + "," + p[i].quocGia + "," +
+						p[i].ngayChieu.ngay + "," + p[i].ngayChieu.thang + "," + p[i].ngayChieu.nam + "," + p[i].giaVeVND + "\n");
+			}
+			writer.close();
+			System.out.println("Đã xuất File thành công");
+		} catch (IOException e) {
+			System.out.println("Xảy ra lỗi khi xuất File " + tenFile);
+		}
+	}
+	
+	
 	
 }
 
