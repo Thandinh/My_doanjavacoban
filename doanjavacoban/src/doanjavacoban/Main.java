@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.NumberFormat;
+import java.util.Locale;
 import java.util.Scanner;
 
 public class Main {
@@ -46,6 +48,12 @@ public class Main {
 				sapXep(phim);
 				break;
 			case 8:
+				thongKe(phim);
+				break;
+			case 9:
+				theLoaiPhim(phim);
+				break;
+			case 10:
 				file(phim);
 				break;
 			default:
@@ -68,7 +76,9 @@ public class Main {
 		System.out.println("║   | 5 |  chỉnh sửa thông tin bộ phim                       ║");
 		System.out.println("║   | 6 |  Xóa 1 bộ phim                                     ║");
 		System.out.println("║   | 7 |  Sắp xếp theo giá                                  ║");
-		System.out.println("║   | 8 |  File                                              ║");
+		System.out.println("║   | 8 |  Thống kê                                          ║");
+		System.out.println("║   | 9 |  Thể loại muốn xem                                 ║");
+		System.out.println("║   |10 |  File                                              ║");
 		System.out.println("║   | 0 |  Dừng chương trình                                 ║");
 		System.out.println("║____________________________________________________________║");
 		System.out.println();
@@ -123,6 +133,36 @@ public class Main {
 		System.out.println("Đã nhập thông tin thành công");
 	}
 	
+//	Hàm in từng bộ phim
+	public static void inTungPhim(Phim[] p, int i) {
+		Locale lc = new Locale("vi", "VN");
+		NumberFormat tienTe = NumberFormat.getCurrencyInstance(lc);
+		System.out.printf("║ %-24s ║ %-7d ║ %-20s ║ %-14s ║ %-20s ║ %-12s ║ %-4d/%-4d/%-6d ║ %-10s ║\n", 
+                p[i].tenPhim , p[i].namSX, p[i].daoDien, p[i].theLoai, 
+                p[i].hangSanXuat, p[i].quocGia, p[i].ngayChieu.ngay, p[i].ngayChieu.thang, 
+                p[i].ngayChieu.nam, tienTe.format(p[i].giaVeVND));
+	}
+	
+//	Hàm xuất thông tin
+	public static void xuatThongTin(Phim[] p) {
+		if (soBoPhim == 0) {
+	        System.out.println("Danh sách phim đang rỗng");
+	        return;
+	    }
+		Locale lc = new Locale("vi", "VN");
+		NumberFormat tienTe = NumberFormat.getCurrencyInstance(lc);
+	    System.out.println("");
+	    System.out.println("╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
+	    System.out.printf("║ %-24s ║ %-7s ║ %-20s ║ %-14s ║ %-20s ║ %-12s ║ %-16s ║ %-10s ║\n", 
+	                       "TÊN PHIM", "NĂM SX", "ĐẠO DIỄN", "THỂ LOẠI", "HÃNG SẢN XUẤT", "QUỐC GIA", "NGÀY CHIẾU", "GIÁ VÉ");
+	    System.out.println("╠══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╣");
+	    for (int i = 0; i < soBoPhim; i++) {
+	    	inTungPhim(p, i);
+	    }
+	    System.out.println("╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
+	   
+	}
+	
 //	Hàm thêm 1 bộ phim
 	public static Phim themPhim() {
 		if(soBoPhim < SOLUONGMAX) {
@@ -133,10 +173,10 @@ public class Main {
 			System.out.print("Thể loại: "); String theLoai = sc.nextLine();
 			System.out.print("Nhập hãng sản xuất: "); String hangSX = sc.nextLine();
 			System.out.print("Nhập quốc gia: "); String quocGia = sc.nextLine();
-			System.out.print("Nhập ngày chiếu: "); int ngayChieu = Integer.parseInt(sc.nextLine());
-			System.out.print("Nhập tháng chiếu: "); int thangChieu = Integer.parseInt(sc.nextLine());
+			System.out.print("Nhập ngày chiếu: "); int ngayChieu = kiemTraDauVao(1, 31);
+			System.out.print("Nhập tháng chiếu: "); int thangChieu = kiemTraDauVao(1, 12);
 			System.out.print("Nhập năm chiếu: "); int namChieu = Integer.parseInt(sc.nextLine());
-			System.out.print("Nhập giá vé(VND): "); int giaVe = Integer.parseInt(sc.nextLine());
+			System.out.print("Nhập giá vé(VND): "); int giaVe = kiemTraDauVao(1000, 999999999);
 			Ngay n = new Ngay(ngayChieu, thangChieu, namChieu);
 			Phim p = new Phim(tenPhim, namSX, tenDaoDien, theLoai, hangSX, quocGia, n, giaVe);
 			soBoPhim++;
@@ -147,28 +187,6 @@ public class Main {
 			 System.out.println("Danh sách phim đã đầy, không thể thêm phim mới.");
 			 return null;
         }
-	}
-	
-	
-//	Hàm xuất thông tin
-	public static void xuatThongTin(Phim[] p) {
-		if (soBoPhim == 0) {
-	        System.out.println("Danh sách phim đang rỗng");
-	        return;
-	    }
-	    System.out.println("");
-	    System.out.println("╔═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
-	    System.out.printf("║ %-24s ║ %-7s ║ %-20s ║ %-14s ║ %-20s ║ %-12s ║ %-16s ║ %11s ║\n", 
-	                       "TÊN PHIM", "NĂM SX", "ĐẠO DIỄN", "THỂ LOẠI", "HÃNG SẢN XUẤT", "QUỐC GIA", "NGÀY CHIẾU", "GIÁ VÉ");
-	    System.out.println("╠═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╣");
-	    for (int i = 0; i < soBoPhim; i++) {
-	        System.out.printf("║ %-24s ║ %-7d ║ %-20s ║ %-14s ║ %-20s ║ %-12s ║ %-4d/%-4d/%-6d ║ %7d VND ║\n", 
-	                          p[i].tenPhim , p[i].namSX, p[i].daoDien, p[i].theLoai, 
-	                          p[i].hangSanXuat, p[i].quocGia, p[i].ngayChieu.ngay, p[i].ngayChieu.thang, 
-	                          p[i].ngayChieu.nam, p[i].giaVeVND);
-	    }
-	    System.out.println("╚═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
-	   
 	}
 	
 //	Hàm xóa 1 bộ phim theo tên
@@ -207,20 +225,280 @@ public class Main {
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Nhập tên của phim cần tìm kiếm: "); String tenPhim = sc.nextLine();
 		boolean timThay = false;
+		Locale lc = new Locale("vi", "VN");
+		NumberFormat tienTe = NumberFormat.getCurrencyInstance(lc);
 		System.out.println("PHIM BẠN CẦN TÌM KIẾM");
-		System.out.println("╔═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
-	    System.out.printf("║ %-24s ║ %-7s ║ %-20s ║ %-14s ║ %-20s ║ %-12s ║ %-16s ║ %11s ║\n", 
+		System.out.println("╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
+	    System.out.printf("║ %-24s ║ %-7s ║ %-20s ║ %-14s ║ %-20s ║ %-12s ║ %-16s ║ %-10s ║\n", 
 	                       "TÊN PHIM", "NĂM SX", "ĐẠO DIỄN", "THỂ LOẠI", "HÃNG SẢN XUẤT", "QUỐC GIA", "NGÀY CHIẾU", "GIÁ VÉ");
-	    System.out.println("╠═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╣");
+	    System.out.println("╠══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╣");
 		for(int i = 0; i < soBoPhim; i++) {
 			if(p[i].tenPhim.equalsIgnoreCase(tenPhim)) {
-				System.out.printf("║ %-24s ║ %-7d ║ %-20s ║ %-14s ║ %-20s ║ %-12s ║ %-4d/%-4d/%-6d ║ %7d VND ║\n", 
-                        p[i].tenPhim , p[i].namSX, p[i].daoDien, p[i].theLoai, 
-                        p[i].hangSanXuat, p[i].quocGia, p[i].ngayChieu.ngay, p[i].ngayChieu.thang, 
-                        p[i].ngayChieu.nam, p[i].giaVeVND);
+				inTungPhim(p, i);
 			}
 		}
-		System.out.println("╚═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
+		System.out.println("╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
+	}
+	
+	
+	public static void thongKe(Phim[] p) {
+		if(soBoPhim == 0) {
+			System.out.println("Danh sách phim đang rỗng");
+			return;
+		}
+		System.out.println("THỐNG KÊ PHIM");
+		System.out.println(" 1 . Giá Vé");
+		System.out.println(" 2 . Quốc gia");
+		System.out.print("Nhập lựa chọn: ");
+		int chon = kiemTraDauVao(1, 2);
+		switch(chon) {
+		case 1:
+			thongKeTheoGia(p);
+			break;
+		case 2:
+			thongKePhimTheoQG(p);
+			break;
+		}
+	}
+	
+	public static void thongKePhimTheoQG(Phim[] p) {
+		System.out.println("PHIM VIỆT NAM");
+		System.out.println("╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
+	    System.out.printf("║ %-24s ║ %-7s ║ %-20s ║ %-14s ║ %-20s ║ %-12s ║ %-16s ║ %-10s ║\n", 
+	                       "TÊN PHIM", "NĂM SX", "ĐẠO DIỄN", "THỂ LOẠI", "HÃNG SẢN XUẤT", "QUỐC GIA", "NGÀY CHIẾU", "GIÁ VÉ");
+	    System.out.println("╠══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╣");
+		for(int i = 0; i < soBoPhim; i++) {
+			if(p[i].quocGia.equalsIgnoreCase("Việt Nam")) {
+				inTungPhim(p, i);
+			}
+		}
+		System.out.println("╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
+		System.out.println("");
+		System.out.println("PHIM HÀN QUỐC");
+		System.out.println("╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
+	    System.out.printf("║ %-24s ║ %-7s ║ %-20s ║ %-14s ║ %-20s ║ %-12s ║ %-16s ║ %-10s ║\n", 
+	                       "TÊN PHIM", "NĂM SX", "ĐẠO DIỄN", "THỂ LOẠI", "HÃNG SẢN XUẤT", "QUỐC GIA", "NGÀY CHIẾU", "GIÁ VÉ");
+	    System.out.println("╠══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╣");
+		for(int i = 0; i < soBoPhim; i++) {
+			if(p[i].quocGia.equalsIgnoreCase("Hàn Quốc")) {
+				inTungPhim(p, i);
+			}
+		}
+		System.out.println("╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
+		System.out.println("");
+		System.out.println("PHIM MỸ");
+		System.out.println("╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
+	    System.out.printf("║ %-24s ║ %-7s ║ %-20s ║ %-14s ║ %-20s ║ %-12s ║ %-16s ║ %-10s ║\n", 
+	                       "TÊN PHIM", "NĂM SX", "ĐẠO DIỄN", "THỂ LOẠI", "HÃNG SẢN XUẤT", "QUỐC GIA", "NGÀY CHIẾU", "GIÁ VÉ");
+	    System.out.println("╠══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╣");
+		for(int i = 0; i < soBoPhim; i++) {
+			if(p[i].quocGia.equalsIgnoreCase("Mỹ")) {
+				inTungPhim(p, i);
+			}
+		}
+		System.out.println("╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
+		System.out.println("");
+		System.out.println("╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
+		System.out.println("");
+		System.out.println("PHIM TRUNG QUỐC");
+		System.out.println("╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
+	    System.out.printf("║ %-24s ║ %-7s ║ %-20s ║ %-14s ║ %-20s ║ %-12s ║ %-16s ║ %-10s ║\n", 
+	                       "TÊN PHIM", "NĂM SX", "ĐẠO DIỄN", "THỂ LOẠI", "HÃNG SẢN XUẤT", "QUỐC GIA", "NGÀY CHIẾU", "GIÁ VÉ");
+	    System.out.println("╠══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╣");
+		for(int i = 0; i < soBoPhim; i++) {
+			if(p[i].quocGia.equalsIgnoreCase("Trung Quốc")) {
+				inTungPhim(p, i);
+			}
+		}
+		System.out.println("╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
+		System.out.println("");
+		System.out.println("╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
+		System.out.println("");
+		System.out.println("PHIM HONG KONG");
+		System.out.println("╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
+	    System.out.printf("║ %-24s ║ %-7s ║ %-20s ║ %-14s ║ %-20s ║ %-12s ║ %-16s ║ %-10s ║\n", 
+	                       "TÊN PHIM", "NĂM SX", "ĐẠO DIỄN", "THỂ LOẠI", "HÃNG SẢN XUẤT", "QUỐC GIA", "NGÀY CHIẾU", "GIÁ VÉ");
+	    System.out.println("╠══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╣");
+		for(int i = 0; i < soBoPhim; i++) {
+			if(p[i].quocGia.equalsIgnoreCase("Hong Kong")) {
+				inTungPhim(p, i);
+			}
+		}
+		System.out.println("╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
+	}
+	
+	public static void thongKeTheoGia(Phim[] p) {
+		System.out.println("Giá vé < 50k");
+		System.out.println("╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
+	    System.out.printf("║ %-24s ║ %-7s ║ %-20s ║ %-14s ║ %-20s ║ %-12s ║ %-16s ║ %-10s ║\n", 
+	                       "TÊN PHIM", "NĂM SX", "ĐẠO DIỄN", "THỂ LOẠI", "HÃNG SẢN XUẤT", "QUỐC GIA", "NGÀY CHIẾU", "GIÁ VÉ");
+	    System.out.println("╠══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╣");
+		for(int i = 0; i < soBoPhim; i++) {
+			if(p[i].giaVeVND <= 50000) {
+				inTungPhim(p, i);
+			}
+		}
+		System.out.println("╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
+		System.out.println("");
+		System.out.println("Giá vé từ 50k > 100k");
+		System.out.println("╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
+	    System.out.printf("║ %-24s ║ %-7s ║ %-20s ║ %-14s ║ %-20s ║ %-12s ║ %-16s ║ %-10s ║\n", 
+	                       "TÊN PHIM", "NĂM SX", "ĐẠO DIỄN", "THỂ LOẠI", "HÃNG SẢN XUẤT", "QUỐC GIA", "NGÀY CHIẾU", "GIÁ VÉ");
+	    System.out.println("╠══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╣");
+		for(int i = 0; i < soBoPhim; i++) {
+			if(p[i].giaVeVND >= 50000 && p[i].giaVeVND <= 100000) {
+				inTungPhim(p, i);
+			}
+		}
+		System.out.println("╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
+		System.out.println("");
+		System.out.println("Giá vé từ 100k > 200k");
+		System.out.println("╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
+	    System.out.printf("║ %-24s ║ %-7s ║ %-20s ║ %-14s ║ %-20s ║ %-12s ║ %-16s ║ %-10s ║\n", 
+	                       "TÊN PHIM", "NĂM SX", "ĐẠO DIỄN", "THỂ LOẠI", "HÃNG SẢN XUẤT", "QUỐC GIA", "NGÀY CHIẾU", "GIÁ VÉ");
+	    System.out.println("╠══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╣");
+		for(int i = 0; i < soBoPhim; i++) {
+			if(p[i].giaVeVND >= 100000 && p[i].giaVeVND <= 200000) {
+				inTungPhim(p, i);
+			}
+		}
+		System.out.println("╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
+		System.out.println("");
+		System.out.println("Giá vé trên 200k");
+		System.out.println("╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
+	    System.out.printf("║ %-24s ║ %-7s ║ %-20s ║ %-14s ║ %-20s ║ %-12s ║ %-16s ║ %-10s ║\n", 
+	                       "TÊN PHIM", "NĂM SX", "ĐẠO DIỄN", "THỂ LOẠI", "HÃNG SẢN XUẤT", "QUỐC GIA", "NGÀY CHIẾU", "GIÁ VÉ");
+	    System.out.println("╠══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╣");
+		for(int i = 0; i < soBoPhim; i++) {
+			if(p[i].giaVeVND >= 200000) {
+				inTungPhim(p, i);
+			}
+		}
+		System.out.println("╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
+	}
+	
+	
+	public static void theLoaiPhim(Phim[] p) {
+		if(soBoPhim == 0) {
+			System.out.println("Danh sách phim đang rỗng");
+			return;
+		}
+		System.out.println("CHỌN THỂ LOẠI BẠN MUỐN XEM--------");
+		System.out.println(" 1 . Hành động");
+		System.out.println(" 2 . Tình cảm");
+		System.out.println(" 3 . Kinh dị");
+		System.out.println(" 4 . Hài hước");
+		System.out.println(" 5 . Hoạt hình");
+		System.out.println(" 6 . Chiến Tranh");
+		System.out.println("Nhập lựa chọn(0 - 6): ");
+		int chon = kiemTraDauVao(1, 6);
+		switch(chon) {
+		case 1:
+			theLoaiHanhDong(p);
+			break;
+		case 2:
+			theLoaiTinhCam(p);
+			break;
+		case 3:
+			theLoaiKinhDi(p);
+			break;
+		case 4:
+			theLoaiHaiHuoc(p);
+			break;
+		case 5:
+			theLoaiHoatHinh(p);
+			break;
+		case 6:
+			theLoaiChienTranh(p);
+			break;
+		}
+	}
+	
+	
+	public static void theLoaiHanhDong(Phim[] p) {
+		
+		System.out.println("THỂ LOẠI HÀNH ĐỘNG");
+		System.out.println("╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
+	    System.out.printf("║ %-24s ║ %-7s ║ %-20s ║ %-14s ║ %-20s ║ %-12s ║ %-16s ║ %-10s ║\n", 
+	                       "TÊN PHIM", "NĂM SX", "ĐẠO DIỄN", "THỂ LOẠI", "HÃNG SẢN XUẤT", "QUỐC GIA", "NGÀY CHIẾU", "GIÁ VÉ");
+	    System.out.println("╠══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╣");
+		for(int i = 0; i < soBoPhim; i++) {
+			if(p[i].theLoai.equalsIgnoreCase("Hành động")) {
+				inTungPhim(p, i);
+			}
+		}
+		System.out.println("╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
+	}
+	
+	public static void theLoaiKinhDi(Phim[] p) {
+		System.out.println("THỂ LOẠI KINH DỊ");
+		System.out.println("╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
+	    System.out.printf("║ %-24s ║ %-7s ║ %-20s ║ %-14s ║ %-20s ║ %-12s ║ %-16s ║ %-10s ║\n", 
+	                       "TÊN PHIM", "NĂM SX", "ĐẠO DIỄN", "THỂ LOẠI", "HÃNG SẢN XUẤT", "QUỐC GIA", "NGÀY CHIẾU", "GIÁ VÉ");
+	    System.out.println("╠══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╣");
+		for(int i = 0; i < soBoPhim; i++) {
+			if(p[i].theLoai.equalsIgnoreCase("Kinh dị")) {
+				inTungPhim(p, i);
+			}
+		}
+		System.out.println("╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
+	}
+	
+	
+	public static void theLoaiTinhCam(Phim[] p) {
+		System.out.println("THỂ LOẠI KINH DỊ");
+		System.out.println("╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
+	    System.out.printf("║ %-24s ║ %-7s ║ %-20s ║ %-14s ║ %-20s ║ %-12s ║ %-16s ║ %-10s ║\n", 
+	                       "TÊN PHIM", "NĂM SX", "ĐẠO DIỄN", "THỂ LOẠI", "HÃNG SẢN XUẤT", "QUỐC GIA", "NGÀY CHIẾU", "GIÁ VÉ");
+	    System.out.println("╠══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╣");
+		for(int i = 0; i < soBoPhim; i++) {
+			if(p[i].theLoai.equalsIgnoreCase("Tình cảm")) {
+				inTungPhim(p, i);
+			}
+		}
+		System.out.println("╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
+	}
+	
+	public static void theLoaiChienTranh(Phim[] p) {
+		System.out.println("THỂ LOẠI CHIẾN TRANH");
+		System.out.println("╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
+	    System.out.printf("║ %-24s ║ %-7s ║ %-20s ║ %-14s ║ %-20s ║ %-12s ║ %-16s ║ %-10s ║\n", 
+	                       "TÊN PHIM", "NĂM SX", "ĐẠO DIỄN", "THỂ LOẠI", "HÃNG SẢN XUẤT", "QUỐC GIA", "NGÀY CHIẾU", "GIÁ VÉ");
+	    System.out.println("╠══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╣");
+		for(int i = 0; i < soBoPhim; i++) {
+			if(p[i].theLoai.equalsIgnoreCase("Chiến tranh")) {
+				inTungPhim(p, i);
+			}
+		}
+		System.out.println("╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
+	}
+	
+	public static void theLoaiHaiHuoc(Phim[] p) {
+		System.out.println("THỂ LOẠI HÀI HƯỚC");
+		System.out.println("╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
+	    System.out.printf("║ %-24s ║ %-7s ║ %-20s ║ %-14s ║ %-20s ║ %-12s ║ %-16s ║ %-10s ║\n", 
+	                       "TÊN PHIM", "NĂM SX", "ĐẠO DIỄN", "THỂ LOẠI", "HÃNG SẢN XUẤT", "QUỐC GIA", "NGÀY CHIẾU", "GIÁ VÉ");
+	    System.out.println("╠══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╣");
+		for(int i = 0; i < soBoPhim; i++) {
+			if(p[i].theLoai.equalsIgnoreCase("Hài hước")) {
+				inTungPhim(p, i);
+			}
+		}
+		System.out.println("╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
+	}
+	
+	public static void theLoaiHoatHinh(Phim[] p) {
+		System.out.println("THỂ LOẠI HOẠT HÌNH");
+		System.out.println("╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
+	    System.out.printf("║ %-24s ║ %-7s ║ %-20s ║ %-14s ║ %-20s ║ %-12s ║ %-16s ║ %-10s ║\n", 
+	                       "TÊN PHIM", "NĂM SX", "ĐẠO DIỄN", "THỂ LOẠI", "HÃNG SẢN XUẤT", "QUỐC GIA", "NGÀY CHIẾU", "GIÁ VÉ");
+	    System.out.println("╠══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╣");
+		for(int i = 0; i < soBoPhim; i++) {
+			if(p[i].theLoai.equalsIgnoreCase("Hoạt hình")) {
+				inTungPhim(p, i);
+			}
+		}
+		System.out.println("╚══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
 	}
 	
 	public static void chinhSuaPhim(Phim[] p) {
@@ -356,6 +634,8 @@ public class Main {
 		xuatThongTin(p);
 	}
 	
+
+	
 	public static void file(Phim[] p) {
 		System.out.println(" _______________ File ________________");
 		System.out.println("║                                     ║");
@@ -379,7 +659,6 @@ public class Main {
 		}
 		
 	}
-	
 	
 	public static void nhapTuFile(Phim[] p) {
 		Scanner sc = new Scanner(System.in);
@@ -428,14 +707,7 @@ public class Main {
 			System.out.println("Xảy ra lỗi khi xuất File " + tenFile);
 		}
 	}
-	
-	
-	
 }
-
-
-	
-
 
 
 
